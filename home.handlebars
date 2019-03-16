@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-        <meta name="author" content="Spencer Carlson">
-        <title>Workout Tracker</title>
         <script
           src="http://code.jquery.com/jquery-3.3.1.js"
           integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
@@ -39,24 +35,13 @@
                     <option value="0">Kgs</option>
                     </select>
                   <br>
-                    <input type="submit" value="Save" name="sub_butt">
+                    <input type="submit" value="Save" name="sub">
                 </fieldset>
             </form>
         </main>
         <button id="reset"
     </body>
     <script>
-        function load_data(){
-            $.ajax({
-                type: "GET",
-                url: '/load',
-                success: function(data)
-                {
-                    console.log(data);
-                    table($('#table-container'), data);
-                }
-            });
-        }
         function table(container, data) {
             var table = $("<table/>")
             $.each(data, function(rowIndex, value){
@@ -70,7 +55,77 @@
             });
             return container.append(table);
         }
-        load_data();
+                   
+        function getId(e) {
+                return $(e.target).parent('tr').data('id');
+        }
+        
+        function renderTable(data, textStatus, jqXHR) {
+           var json = JSON.parse(data.results);
+           $('.tableContainer').html('');
+
+           if (json.length > 0) {
+              var body = document.body;
+              var table = document.createElement('table');
+              var tableBody = document.createElement('tbody');
+
+              table.style.width = '100%';
+              table.setAttribute('border', '1');
+              var tr = document.createElement('tr');
+              for (var key in json[0]) {
+                 if (key !== 'id') {
+                    var th = document.createElement('th');
+                    th.appendChild(document.createTextNode(key));
+                    tr.appendChild(th);
+                 }
+              }
+              var th = document.createElement('th');
+              tr.appendChild(th);
+              tr.appendChild(th);
+              tableBody.appendChild(tr);
+              for (var i = 0; i < json.length; i++) {
+                 tr = document.createElement('tr');
+                 for (var k in json[i]) {
+                    if (k !== 'id') {
+                       var td = document.createElement('td');
+                       var label = json[i][k];
+                       td.appendChild(document.createTextNode(label));
+                       tr.appendChild(td);
+                    } else {
+                       tr.setAttribute('data-id', json[i][k]);
+                    }
+                 }
+                 var edit = document.createElement('button');
+                 edit.className = 'btn btn-default edit';
+                 edit.appendChild(document.createTextNode('edit'));
+                 var del = document.createElement('button');
+                 del.className = 'btn btn-danger delete';
+                 del.appendChild(document.createTextNode('delete'));
+                 tr.appendChild(edit);
+                 tableBody.appendChild(tr);
+                 tr.appendChild(del);
+                 tableBody.appendChild(tr); 
+              }
+              table.appendChild(tableBody);
+              var div = document.getElementsByClassName('tableContainer')[0];
+              div.appendChild(table);
+           } else {
+              $('.tableContainer').html('No records to show');
+           }
+           addListeners();
+        }
+        function load_data(){
+            $.ajax({
+                type: "GET",
+                url: '/load',
+                dataType: "json"
+                success: function(data)
+                {
+                    console.log(data);
+                    table($('#table-container'), data);
+                }
+            });
+        }
         $("#myform").submit(function(e) {
             e.preventDefault();
                 var form = $(this);
@@ -80,12 +135,13 @@
                        type: "POST",
                        url: '/insert',
                        data: form.serialize(),
-                        dataType: "json",
                        success: function(data)
                        {
+                           alert
                            load_data();
                        }
                      });
             });
+            load_data();
     </script>
 </html>

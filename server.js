@@ -15,7 +15,19 @@ app.set('port', 4687);
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
-
+dbsql.pool.query("DROP TABLE IF EXISTS workouts", function(err){
+    var createString = "CREATE TABLE workouts("+
+    "id INT PRIMARY KEY AUTO_INCREMENT,"+
+    "name VARCHAR(255) NOT NULL,"+
+    "reps INT,"+
+    "weight INT,"+
+    "date DATE,"+
+    "lbs BOOLEAN)";
+    dbsql.pool.query(createString, function(err){
+        if (err) console.log(err);
+      console.log("table created");
+    })
+});
 
 app.post('/insert',function(req,res,next){
   var context = {};
@@ -63,6 +75,7 @@ app.get('/reset-table',function(req,res,next){
     "date DATE,"+
     "lbs BOOLEAN)";
     dbsql.pool.query(createString, function(err){
+        if (err) console.log(err);
       context.results = "Table reset";
       res.end("success");
     })
