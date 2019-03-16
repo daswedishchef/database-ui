@@ -50,24 +50,23 @@
             
         }
         
-        function events(length){
-            $('#delete' + length).click(function(e){
-                alert("delet pressed");
-                var id = get_id(e);
-                $ajax({
-                    url: '/deleter?id='+id,
-                    method: 'GET',
-                    success: function(data)
-                {
+        function deleteFunc(key){
+             alert("delet pressed");
+             var id = get_id(e);
+             $ajax({
+                 url: '/deleter?id='+id,
+                 method: 'GET',
+                 success: function(data)
+                 {
                     load_data();    
-                }
-                })
-            })
-            $('#edit' + length).click(function(e) {
-              var id = getId(e);
-              editform(e, id);
-           });
+                 }
+             })
         }
+        
+        function editFunc(key){
+            
+        }
+        
         function table(container, data) {
             var delb = $("<button>Delete</button>");
             var editb = $("<button>Edit</button>");
@@ -97,9 +96,8 @@
                 $('<td>').text(value.weight),
                 $('<td>').text(units),
                 $('<td>').text(value.date),
-                $('<td>').attr('name', "edit" + value.id).append(editb),
-                $('<td>').attr('name', "delete" + value.id).append(delb),
-                events(value.id);
+                $('<td>').attr('name', "edit" + value.id).attr("onclick",editFunc(value.id)).append(editb),
+                $('<td>').attr('name', "delete" + value.id).attr("onclick",deleteFunc(value.id)).append(delb),
             )
             table.append($tr);
             return container.html(table);
