@@ -19,7 +19,7 @@ app.set('view engine', 'handlebars');
 
 app.post('/insert',function(req,res,next){
   var context = {};
-  dbsql.pool.query("INSERT INTO workouts (`name`,`reps`,`weight`,`date`,`unit`) VALUES (?,?,?,?,?)", [req.query.c], function(err, result){
+  dbsql.pool.query("INSERT INTO workouts (`name`,`reps`,`weight`,`date`,`lbs`) VALUES (?,?,?,?,?)", [req.body.name, req.body.reps, req.body.weight, req.body.date, req.body.lbs], function(err, result){
     if(err){
       next(err);
       return;
@@ -31,14 +31,14 @@ app.post('/insert',function(req,res,next){
 
 app.get('/safe-update',function(req,res,next){
   var context = {};
-  dbsql.pool.query("SELECT * FROM workouts WHERE id=?", [req.query.id], function(err, result){
+  dbsql.pool.query("SELECT * FROM todo WHERE id=?", [req.query.id], function(err, result){
     if(err){
       next(err);
       return;
     }
     if(result.length == 1){
       var curVals = result[0];
-      dbsql.pool.query("UPDATE todo SET name=?, reps=?, weight=?, date=?, unit=? WHERE id=? ",
+      mysql.pool.query("UPDATE work SET name=?, done=?, due=? WHERE id=? ",
         [req.query.name || curVals.name, req.query.done || curVals.done, req.query.due || curVals.due, req.query.id],
         function(err, result){
         if(err){
@@ -54,7 +54,7 @@ app.get('/safe-update',function(req,res,next){
 
 app.get('/reset-table',function(req,res,next){
   var context = {};
-  dbsqlpool.query("DROP TABLE IF EXISTS workouts", function(err){ //replace your connection pool with the your variable containing the connection pool
+  dbsql.pool.query("DROP TABLE IF EXISTS workouts", function(err){
     var createString = "CREATE TABLE workouts("+
     "id INT PRIMARY KEY AUTO_INCREMENT,"+
     "name VARCHAR(255) NOT NULL,"+
@@ -62,15 +62,15 @@ app.get('/reset-table',function(req,res,next){
     "weight INT,"+
     "date DATE,"+
     "lbs BOOLEAN)";
-    dbsqlpool.query(createString, function(err){
+    dbsql.pool.query(createString, function(err){
       context.results = "Table reset";
-      res.render('home',context);
+      res.end("success");
     })
   });
 });
 
 
-app.post('/',function(req,res,next){
+app.get('/load',function(req,res,next){
 var context = {};
   dbsql.pool.query('SELECT * FROM workouts', function(err, rows, fields){
     if(err){

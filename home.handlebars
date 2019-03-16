@@ -5,65 +5,87 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
         <meta name="author" content="Spencer Carlson">
         <title>Workout Tracker</title>
-        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script
+          src="http://code.jquery.com/jquery-3.3.1.js"
+          integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+          crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I=" crossorigin="anonymous"></script>
     </head>
 
     <body>
         <div class="center"><h2>Workout Tracker</h2></div>
-        <div class="table-container">
-            <button value="Enter" id="submit">Save</button>
-            <div id="load-table">
-                
-            </div>
+        <div id="table-container">
+            
         </div>
         <main class="form-container">
-            <form id="myform" action="index.php">
+            <form id="myform">
                 <fieldset>
                     <legend>Add Entry</legend>
                   Name:<br>
-                  <input type="text" id="name" value="">
+                  <input type="text" name="name" value="">
                   <br>
                   Reps:<br>
-                  <input type="number" id="reps" value="">
+                  <input type="number" name="reps" value="">
                   <br>
                     Weight:<br>
-                  <input type="number" id="weight" value="">
+                  <input type="number" name="weight" value="">
                   <br>
                     Date:<br>
-                  <input type="date" id="date" value="">
+                  <input type="date" name="date" value="">
                   <br>
                     Unit:<br>
-                  <input type="number" id="reps" value="">
+                  <select name="lbs">
+                    <option value="1">Lbs</option>
+                    <option value="0">Kgs</option>
+                    </select>
                   <br>
+                    <input type="submit" value="Save" name="sub_butt">
                 </fieldset>
-            </form> 
+            </form>
         </main>
-        
+        <button id="reset"
     </body>
     <script>
-         $(function() {
-           $('#myform').ajaxForm(function() {
-               alert("Entry Submitted");
-           });
-         });
-        $(document).ready(function(){
-           var data = [["yee", 16, 340, "1998-1-1", "lbs"]]
-                $("submit").click(function(){
-                    $("load-table").table();
-                }); 
+        function load_data(){
+            $.ajax({
+                type: "GET",
+                url: '/load',
+                success: function(data)
+                {
+                    console.log(data);
+                    table($('#table-container'), data);
+                }
+            });
+        }
         function table(container, data) {
             var table = $("<table/>")
-            $.each(data, function(rowIndex, r) {
-                var row = $("<tr/>");
-                $.each(r, function(colIndex, c) { 
-                    row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>"));
-                });
-                table.append(row);
+            $.each(data, function(rowIndex, value){
+                var $tr = $('<tr>').append(
+                $('<td>').text(data.id),
+                $('<td>').text(data.name),
+                $('<td>').text(data.reps),
+                $('<td>').text(data.weight),
+                $('<td>').text(data.date),
+                $('<td>').text(data.lbs),
             });
             return container.append(table);
         }
-        
+        load_data();
+        $("#myform").submit(function(e) {
+            e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                    console.log(form.serialize());
+                $.ajax({
+                       type: "POST",
+                       url: '/insert',
+                       data: form.serialize(),
+                        dataType: "json",
+                       success: function(data)
+                       {
+                           load_data();
+                       }
+                     });
+            });
     </script>
 </html>
