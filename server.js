@@ -95,7 +95,7 @@ var context = {};
   });
 });
 
-app.delete('/delete', function(req, res) {
+app.get('/deleter', function(req, res) {
    var id = req.query.id;
    var contex = {};
    pool.query('DELETE FROM todo WHERE id = ' + id, function(err, rows, fields) {

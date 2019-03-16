@@ -39,26 +39,37 @@
                 </fieldset>
             </form>
         </main>
+        <div name="edit-container"></div>
         <a href="/reset-table"><button id="reset">Reset</button></a>
     </body>
     <script>
         function getId(e) {
            return $(e.target).parent('tr').data('id');
         }
+        function editform(e, id) {
+            
+        }
+        
         function events(){
-            $('.delete_button').on('click', function(e){
+            $('#delete_button').click(function(e){
                 var id = get_id(e);
                 $ajax({
-                    url: '/tasks?id='+id,
-                    method: 'DELETE',
+                    url: '/deleter?id='+id,
+                    method: 'GET',
                     success: function(data)
                 {
                     load_data();    
                 }
                 })
             })
+            $('#edit-button').click(function(e) {
+              var id = getId(e);
+              editform(e, id);
+           });
         }
         function table(container, data) {
+            var delb = $("<button>Delete</button>");
+            var editb = $("<button>Edit</button>");
             var units = "";
             var table = $("<table/>")
             var $tr = $('<tr>').append(
@@ -83,7 +94,8 @@
                 $('<td>').text(value.weight),
                 $('<td>').text(units),
                 $('<td>').text(value.date),
-                $('<td>').text("Delete").addClass("delete_button"),//this button
+                $('<td>').attr('id', 'edit-button').append(editb),
+                $('<td>').attr('id', 'delete-button').append(delb),
             )
             table.append($tr);
             return container.html(table);
