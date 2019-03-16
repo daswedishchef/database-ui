@@ -49,7 +49,7 @@
             $('.delete_button').on('click', function(e){
                 var id = get_id(e);
                 $ajax({
-                    url: /tasks?id='+id,
+                    url: '/tasks?id='+id,
                     method: 'DELETE',
                     success: function(data)
                 {
