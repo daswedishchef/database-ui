@@ -19,7 +19,7 @@ app.set('view engine', 'handlebars');
 
 app.post('/insert',function(req,res,next){
   var context = {};
-  dbsql.pool.query("INSERT INTO todo (`name`,`reps`,`weight`,`date`,`unit`) VALUES (?)", [req.query.c], function(err, result){
+  dbsql.pool.query("INSERT INTO workouts (`name`,`reps`,`weight`,`date`,`unit`) VALUES (?,?,?,?,?)", [req.query.c], function(err, result){
     if(err){
       next(err);
       return;
@@ -31,14 +31,14 @@ app.post('/insert',function(req,res,next){
 
 app.get('/safe-update',function(req,res,next){
   var context = {};
-  dbsql.pool.query("SELECT * FROM todo WHERE id=?", [req.query.id], function(err, result){
+  dbsql.pool.query("SELECT * FROM workouts WHERE id=?", [req.query.id], function(err, result){
     if(err){
       next(err);
       return;
     }
     if(result.length == 1){
       var curVals = result[0];
-      dbsql.pool.query("UPDATE todo SET name=?, done=?, due=? WHERE id=? ",
+      dbsql.pool.query("UPDATE todo SET name=?, reps=?, weight=?, date=?, unit=? WHERE id=? ",
         [req.query.name || curVals.name, req.query.done || curVals.done, req.query.due || curVals.due, req.query.id],
         function(err, result){
         if(err){
