@@ -95,6 +95,19 @@ var context = {};
   });
 });
 
+app.delete('/delete', function(req, res) {
+   var id = req.query.id;
+   var contex = {};
+   pool.query('DELETE FROM todo WHERE id = ' + id, function(err, rows, fields) {
+      if (err) {
+         next(err);
+         return;
+      }
+      context.results = JSON.stringify(rows);
+      res.send(contex);
+   });
+});
+
 app.get('/',function(req,res,next){
     res.render('home');
 });

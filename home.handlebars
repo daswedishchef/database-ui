@@ -33,92 +33,68 @@
                   <select name="lbs">
                     <option value="1">Lbs</option>
                     <option value="0">Kgs</option>
-                    </select>
+                </select>
                   <br>
                     <input type="submit" value="Save" name="sub">
                 </fieldset>
             </form>
         </main>
-        <button id="reset"
+        <a href="/reset-table"><button id="reset">Reset</button></a>
     </body>
     <script>
+        function getId(e) {
+           return $(e.target).parent('tr').data('id');
+        }
+        function events(){
+            $('.delete_button').on('click', function(e){
+                var id = get_id(e);
+                $ajax({
+                    url: /tasks?id='+id,
+                    method: 'DELETE',
+                    success: function(data)
+                {
+                    load_data();    
+                }
+                })
+            })
+        }
         function table(container, data) {
+            var units = "";
             var table = $("<table/>")
+            var $tr = $('<tr>').append(
+                $('<td>').text("Name"),
+                $('<td>').text("reps"),
+                $('<td>').text("weight"),
+                $('<td>').text("units"),
+                $('<td>').text("date"),
+                
+            )
+            table.append($tr);
             $.each(data, function(rowIndex, value){
+                if(value.lbs == 0){
+                    units = "lbs";
+                }
+                else{
+                    units ="kgs";
+                }
                 var $tr = $('<tr>').append(
-                $('<td>').text(data.id),
-                $('<td>').text(data.name),
-                $('<td>').text(data.reps),
-                $('<td>').text(data.weight),
-                $('<td>').text(data.date),
-                $('<td>').text(data.lbs),
+                $('<td>').text(value.name),
+                $('<td>').text(value.reps),
+                $('<td>').text(value.weight),
+                $('<td>').text(units),
+                $('<td>').text(value.date),
+                $('<td>').text("Delete").addClass("delete_button"),//this button
+            )
+            table.append($tr);
+            return container.html(table);
             });
-            return container.append(table);
         }
                    
-        function getId(e) {
-                return $(e.target).parent('tr').data('id');
-        }
-        
-        function renderTable(data, textStatus, jqXHR) {
-           var json = JSON.parse(data.results);
-           $('.tableContainer').html('');
-
-           if (json.length > 0) {
-              var body = document.body;
-              var table = document.createElement('table');
-              var tableBody = document.createElement('tbody');
-
-              table.style.width = '100%';
-              table.setAttribute('border', '1');
-              var tr = document.createElement('tr');
-              for (var key in json[0]) {
-                 if (key !== 'id') {
-                    var th = document.createElement('th');
-                    th.appendChild(document.createTextNode(key));
-                    tr.appendChild(th);
-                 }
-              }
-              var th = document.createElement('th');
-              tr.appendChild(th);
-              tr.appendChild(th);
-              tableBody.appendChild(tr);
-              for (var i = 0; i < json.length; i++) {
-                 tr = document.createElement('tr');
-                 for (var k in json[i]) {
-                    if (k !== 'id') {
-                       var td = document.createElement('td');
-                       var label = json[i][k];
-                       td.appendChild(document.createTextNode(label));
-                       tr.appendChild(td);
-                    } else {
-                       tr.setAttribute('data-id', json[i][k]);
-                    }
-                 }
-                 var edit = document.createElement('button');
-                 edit.className = 'btn btn-default edit';
-                 edit.appendChild(document.createTextNode('edit'));
-                 var del = document.createElement('button');
-                 del.className = 'btn btn-danger delete';
-                 del.appendChild(document.createTextNode('delete'));
-                 tr.appendChild(edit);
-                 tableBody.appendChild(tr);
-                 tr.appendChild(del);
-                 tableBody.appendChild(tr); 
-              }
-              table.appendChild(tableBody);
-              var div = document.getElementsByClassName('tableContainer')[0];
-              div.appendChild(table);
-           } else {
-              $('.tableContainer').html('No records to show');
-           }
-           addListeners();
-        }
         function load_data(){
             $.ajax({
                 type: "GET",
                 url: '/load',
-                dataType: "json"
+                dataType: "json",
                 success: function(data)
                 {
                     console.log(data);
@@ -137,11 +113,11 @@
                        data: form.serialize(),
                        success: function(data)
                        {
-                           alert
+                           alert("data sent");
                            load_data();
                        }
-                     });
-            });
-            load_data();
+                });
+        });
+        load_data();
     </script>
 </html>
