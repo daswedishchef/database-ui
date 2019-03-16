@@ -50,8 +50,9 @@
             
         }
         
-        function events(){
-            $('#delete_button').click(function(e){
+        function events(length){
+            $('#delete' + length).click(function(e){
+                alert("delet pressed");
                 var id = get_id(e);
                 $ajax({
                     url: '/deleter?id='+id,
@@ -62,7 +63,7 @@
                 }
                 })
             })
-            $('#edit-button').click(function(e) {
+            $('#edit' + length).click(function(e) {
               var id = getId(e);
               editform(e, id);
            });
@@ -82,6 +83,8 @@
             )
             table.append($tr);
             $.each(data, function(rowIndex, value){
+                var delb = $("<button>Delete</button>");
+                var editb = $("<button>Edit</button>");
                 if(value.lbs == 0){
                     units = "lbs";
                 }
@@ -94,8 +97,9 @@
                 $('<td>').text(value.weight),
                 $('<td>').text(units),
                 $('<td>').text(value.date),
-                $('<td>').attr('id', 'edit-button').append(editb),
-                $('<td>').attr('id', 'delete-button').append(delb),
+                $('<td>').attr('name', "edit" + value.id).append(editb),
+                $('<td>').attr('name', "delete" + value.id).append(delb),
+                events(value.id);
             )
             table.append($tr);
             return container.html(table);
