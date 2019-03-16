@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+        <meta name="author" content="Spencer Carlson">
+        <title>Workout Tracker</title>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I=" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <div class="center"><h2>Workout Tracker</h2></div>
+        <div class="table-container">
+            <button value="Enter" id="submit">Save</button>
+            <div id="load-table">
+                
+            </div>
+        </div>
+        <main class="form-container">
+            <form id="myform" action="index.php">
+                <fieldset>
+                    <legend>Add Entry</legend>
+                  Name:<br>
+                  <input type="text" id="name" value="">
+                  <br>
+                  Reps:<br>
+                  <input type="number" id="reps" value="">
+                  <br>
+                    Weight:<br>
+                  <input type="number" id="weight" value="">
+                  <br>
+                    Date:<br>
+                  <input type="date" id="date" value="">
+                  <br>
+                    Unit:<br>
+                  <input type="number" id="reps" value="">
+                  <br>
+                </fieldset>
+            </form> 
+        </main>
+        
+    </body>
+    <script>
+        <script>
+         $(function() {
+           $('#myform').ajaxForm(function() {
+               alert("Entry Submitted");
+           });
+         });
+       /*$(document).ready(function(){
+           var data = [["yee", 16, 340, "1998-1-1", "lbs"]]
+                $("submit").click(function(){
+                    $("load-table").table();
+                }); 
+        function table(container, data) {
+            var table = $("<table/>")
+            $.each(data, function(rowIndex, r) {
+                var row = $("<tr/>");
+                $.each(r, function(colIndex, c) { 
+                    row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>"));
+                });
+                table.append(row);
+            });
+            return container.append(table);
+        }
+        
+    </script>
+</html>
